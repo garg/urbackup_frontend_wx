@@ -1038,7 +1038,45 @@ std::wstring UnescapeSQLString(std::wstring pStr)
 	return pStr;
 }
 
-string htmldecode(string str, bool html, char xc='%');
+/*
+std::string htmldecode(string str, bool html, char xc='%');
+*/
+
+std::string htmldecode(string str, bool html, char xc)
+{
+	std::string ret;
+	for (size_t i = 0; i<str.size(); i++)
+	{
+		if (str[i] == xc && i + 2<str.size())
+		{
+			std::string data; data.push_back(str[i + 1]); data.push_back(str[i + 2]);
+			unsigned char ch = (unsigned char)hexToULong(data);
+			if (html == true && ch != 0)
+			{
+				if (ch != '-' && ch != ',' && ch != '#')
+					ret += "&#" + nconvert((s32)ch) + ";";
+				else
+				{
+					ret += ch;
+				}
+			}
+			else if (ch != 0)
+			{
+				ret += ch;
+			}
+			i += 2;
+		}
+		else if (str[i] == '+' && !html)
+		{
+			ret += ' ';
+		}
+		else
+		{
+			ret += str[i];
+		}
+	}
+	return ret;
+}
 
 void ParseParamStrHttp(const std::string &pStr, std::map<std::string, std::string> *pMap)
 {
@@ -1175,43 +1213,6 @@ std::string bytesToHex(const std::string& data)
 	return bytesToHex(reinterpret_cast<const unsigned char*>(data.data()), data.size());
 }
 
-
-
-string htmldecode(string str, bool html, char xc)
-{
-	std::string ret;
-	for (size_t i = 0; i<str.size(); i++)
-	{
-		if (str[i] == xc && i + 2<str.size())
-		{
-			std::string data; data.push_back(str[i + 1]); data.push_back(str[i + 2]);
-			unsigned char ch = (unsigned char)hexToULong(data);
-			if (html == true && ch != 0)
-			{
-				if (ch != '-' && ch != ',' && ch != '#')
-					ret += "&#" + nconvert((s32)ch) + ";";
-				else
-				{
-					ret += ch;
-				}
-			}
-			else if (ch != 0)
-			{
-				ret += ch;
-			}
-			i += 2;
-		}
-		else if (str[i] == '+' && !html)
-		{
-			ret += ' ';
-		}
-		else
-		{
-			ret += str[i];
-		}
-	}
-	return ret;
-}
 bool checkhtml(const std::string &str)
 {
 	for(size_t i=0;i<str.size();++i)

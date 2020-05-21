@@ -97,7 +97,10 @@ ConfigPath::ConfigPath(wxWindow* parent)
 		if (dir.path.find("|") != std::string::npos)
 		{
 			std::vector<std::string> toks;
-			TokenizeMail(std::string(dir.path.ToUTF8()), toks, "|");
+			/* #Todo: add a check to see if dirpath exists*/
+			std::string val;
+			val = std::string(dir.path.ToUTF8());
+			TokenizeMail(val, toks, "|");
 			dir.path = toks[0];
 			dir.name = toks[1];
 			if (toks.size()>2)
